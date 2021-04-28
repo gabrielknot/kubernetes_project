@@ -1,0 +1,4 @@
+with_items:
+- swap
+- none
+k3s_install_by_sh: curl -sfL https://get.k3s.io | sh -s - --docker
