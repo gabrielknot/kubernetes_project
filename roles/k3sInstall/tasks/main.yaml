@@ -7,7 +7,7 @@
     command: swapoff -a
     when: ansible_swaptotal_mb > 0
 - name: Install K3s binaries
-    shel: "{{ k3s_install_by_sh }}"
+    command: "{{ k3s_install_by_sh }}"
 - name: Configure node ip
   lineinfile:
     path: /etc/default/kubelet
@@ -17,3 +17,4 @@
     name: kubelet
     daemon_reload: yes
     state: restarted
+
