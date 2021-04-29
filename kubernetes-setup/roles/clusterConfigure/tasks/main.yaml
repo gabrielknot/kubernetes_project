@@ -10,3 +10,11 @@
 - name: Copy join command to local file
   local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
 
+- name: Instaling Metallb
+  become: false
+  command: kubectl get configmap kube-proxy -n kube-system -o yaml | sed -e "s/strictARP: false/strictARP: true/" | kubectl apply -f - -n kube-system && kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/namespace.yaml && \
+                                                                                                                  kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/metallb.yaml &&\
+- name: Configuring Metallb Secret
+  become: false
+  command: kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"                                                                                                            
+  run_once: true
