@@ -1,0 +1,20 @@
+- name: Remove swapfile from /etc/fstab
+   mount:
+    name: "{{ item }}"
+      fstype: swap
+      state: absent
+- name: Disable swap
+    command: swapoff -a
+    when: ansible_swaptotal_mb > 0
+- name: Install K3s binaries
+    command: "{{ k3s_install_by_sh }}"
+- name: Configure node ip
+  lineinfile:
+    path: /etc/default/kubelet
+    line: KUBELET_EXTRA_ARGS=--node-ip={{ node_ip }}
+- name: Restart kubelet
+  service:
+    name: kubelet
+    daemon_reload: yes
+    state: restarted
+

@@ -1,7 +1,0 @@
-name: Node Configuration
-hosts: master,nodes
-roles:
-- installDocker
-- k3sInstall
-- clusterConfiguration
-
