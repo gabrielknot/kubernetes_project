@@ -1,3 +1,6 @@
 [submodule "kubernetes-cluster-app"]
 	path = kubernetes-cluster-app
 	url = https://github.com/gabrielknot/kubernetes-cluster-app
+[submodule "login-Frontend"]
+	path = login-Frontend
+	url = https://github.com/bbachi/angular-nodejs-example/
