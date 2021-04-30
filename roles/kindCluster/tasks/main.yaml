@@ -1,3 +1,8 @@
+- name: Git get repo
+  ansible.builtin.git:
+    repo: "{{ repo_url }}"
+    dest: "{{ repo_name }}"
+
 - name: Install packages that allow apt to be used over HTTPS
     apt:
       name: "{{ packages_aux }}"
