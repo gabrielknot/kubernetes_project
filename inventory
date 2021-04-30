@@ -1,3 +1,5 @@
+[locahost]
+local		ansible_host=localhost
 [master]
 master 		ansible_host=192.168.50.10
 

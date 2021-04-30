@@ -4,3 +4,6 @@
 [submodule "login-Frontend"]
 	path = login-Frontend
 	url = https://github.com/bbachi/angular-nodejs-example/
+[submodule "documentation"]
+	path = documentation
+	url = https://github.com/gabrielknot/Documentation_Project
