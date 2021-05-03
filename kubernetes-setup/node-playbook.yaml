@@ -1,5 +1,5 @@
 name: Worker Configuration
 hosts: nodes
 roles:
-- nodeRoutine
+  - nodeRoutine
 
