@@ -1,2 +1,2 @@
 [locahost]
-local		ansible_host=localhost
+local		ansible_host=0.0.0.0

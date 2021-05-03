@@ -18,9 +18,11 @@
 
 - name: Apply mettallb mainifest
   command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/master/manifests/metallb.yaml
-- name: Copy the metallb configmap into the "{{ ansible_host }}" 
-  src: metllb-configmap.yaml
-  dest: "{{ metallb_configmap_dest }}"
+
+- name: Copy the metallb configmap into the host
+  copy:
+    src: metllb-configmap.yaml
+    dest: "{{ metallb_configmap_dest }}"
 
 - name: Apply mettallb mainifest
   command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/master/manifests/metallb.yaml
@@ -28,9 +30,8 @@
   community.kubernetes.k8s_info:
     kind: Pod
     namespace: metallb-system
-    wait: yes
-      wait_condition:
-        type: Ready
-        status: True
-  - name: Setup address pool used by loadbalancers
-    command: echo "      - $( docker network inspect -f '{{.IPAM.Config}}' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.200/' | sed 's/\/.*//g' )-$( docker network inspect -f '{{.IPAM.Config}}' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.250/' | sed 's/\/.*//g' ) >> {{ metallb_configmap_dest }}"
+    wait_condition:
+      type: Ready
+      status: True
+- name: Setup address pool used by loadbalancers
+  command: echo "      - $( docker network inspect -f '{{.IPAM.Config}}' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.200/' | sed 's/\/.*//g' )-$( docker network inspect -f '{{.IPAM.Config}}' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.250/' | sed 's/\/.*//g' ) >> {{ metallb_configmap_dest }}"
