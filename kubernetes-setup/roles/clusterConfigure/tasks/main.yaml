@@ -21,6 +21,7 @@
 - name: Copy the metallb configmap into the "{{ ansible_host }}" 
     src: "{{ metallb_configmap_src }}"
     dest: "{{ metallb_configmap_dest }}"
+
 - name: Apply mettallb mainifest
   command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/master/manifests/metallb.yaml
 - name: Wait all pods in metallb system namespace still running
