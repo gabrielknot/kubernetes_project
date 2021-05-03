@@ -22,7 +22,7 @@
     url: "{{ kind_bin_url }}"
     dest: "{{ usr_bin_kind_dir }}"
 
-  - name: Give execution permissions to an existing file
-  ansible.builtin.file:
-    path: "{{ usr_bin_kind_dir }}"
-    mode: u+rwx
+- name: Give execution permissions to an existing file
+ansible.builtin.file:
+  path: "{{ usr_bin_kind_dir }}"
+  mode: '0755'
