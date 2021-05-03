@@ -1,7 +1,7 @@
 
-- name: Install flannel pod network
+- name: Install "{{ pod_network_name }}" pod network
   become: false
-  command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+  command: kubectl apply -f "{{ pod_network_raw }}"
 
 - name: Generate join command
   command: kubeadm token create --print-join-command
@@ -10,30 +10,26 @@
 - name: Copy join command to local file
   local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
 
-- name: Instaling Metallb
-  become: false
-  command: kubectl get configmap kube-proxy -n kube-system -o yaml | sed -e "s/strictARP: false/strictARP: true/" | kubectl apply -f - -n kube-system && kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/namespace.yaml && \
-                                                                                                                   kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/metallb.yaml &&\
-- name: Configuring Metallb Secret
-  become: false
-  command: kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"                                                                                                            
-  run_once: true
+- name: Create metallb namespace
+  command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/master/manifests/namespace.yaml
 
-- name: Metallb Layer2 Configuration
-  become: false 
-  command: |
-    cat <<EOF | kubectl create -f -
-    apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      namespace: metallb-system
-      name: config
-    data:
-      config: |
-        address-pools:
-        - name: default
-          protocol: layer2
-          addresses:
-          - 192.168.1.240-192.168.1.250
-    EOF
-    
+- name: Create the member list secrets
+  command: kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)" 
+
+- name: Apply mettallb mainifest
+  command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/master/manifests/metallb.yaml
+- name: Copy the metallb configmap into the "{{ ansible_host }}" 
+    src: "{{ metallb_configmap_src }}"
+    dest: "{{ metallb_configmap_dest }}"
+- name: Apply mettallb mainifest
+  command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/master/manifests/metallb.yaml
+- name: Wait all pods in metallb system namespace still running
+  community.kubernetes.k8s_info:
+    kind: Pod
+    namespace: metallb-system
+    wait: yes
+      wait_condition:
+        type: Ready
+        status: True
+  - name: Setup address pool used by loadbalancers
+    command: echo "     - $( docker network inspect -f '{{.IPAM.Config}}' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.200/' | sed 's/\/.*//g' )-$( docker network inspect -f '{{.IPAM.Config}}' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.250/' | sed 's/\/.*//g' ) >> {{ metallb_configmap_dest }}"
