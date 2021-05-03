@@ -1,3 +1,5 @@
+# {{ ansible_managed }}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -9,4 +11,3 @@ data:
     - name: default
       protocol: layer2
       addresses:
-     - 172.20.255.200-172.20.255.250 >> {{ metallb_configmap_dest }}
