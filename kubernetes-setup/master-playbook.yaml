@@ -1,7 +1,8 @@
-name: Node Configuration
-hosts: master,nodes
-roles:
-  - dockerInstall 
-  - kindInstall
-  - clusterConfigure
+---
+- name: Node Configuration
+  hosts: master,nodes
+  roles:
+    - dockerInstall 
+    - kindInstall
+    - clusterConfigure
 
