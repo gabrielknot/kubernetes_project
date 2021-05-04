@@ -1,7 +1,7 @@
 ---
 
-#- name: Setup the kind cluster
-#  command: kind create cluster --config "{{ kind_config_file }}"
+- name: Setup the kind cluster
+  command: kind create cluster --config "{{ kind_config_file }}"
 
 - name: Download "{{ pod_network_name }}" pod network
   ansible.builtin.get_url:
@@ -30,17 +30,17 @@
 - name: Create the member list secrets
   command: kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)" 
 
-- name: Apply mettallb mainifest
+- name: Download metallb manifests yaml file
+  ansible.builtin.get_url:
+    url: "{{ metallb_manifests_yaml_raw }}"
+    dest: ~/metallb-manifests.yaml
+    mode: '0664'
+
+- name: Apply metallb mainifest
   become: false
-  command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/master/manifests/metallb.yaml
-
-- name: Copy the metallb configmap into the host
-  copy:
-    src: metllb-configmap.yaml
-    dest: "{{ metallb_configmap_dest }}"
-
-- name: Apply mettallb mainifest
-  command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/master/manifests/metallb.yaml
+  community.kubernetes.k8s:
+    state: present
+    src: ~/metallb-manifests.yaml
 
 - name: Wait all pods in metallb system namespace still running
   community.kubernetes.k8s_info:
