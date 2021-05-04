@@ -54,5 +54,5 @@
 
 - name: Setup address pool used by loadbalancers
   become: false
-  shell: echo "      - $( docker network inspect -f '{{.IPAM.Config}}' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.200/' | sed 's/\/.*//g' )-$( docker network inspect -f '{{.IPAM.Config}}' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.250/' | sed 's/\/.*//g' )" >> "{{ metallb_configmap_dest }}"
+  shell: echo "      - $( docker network inspect -f \'\{\{\.IPAM.Config\}\}\' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.200/' | sed 's/\/.*//g' )-$( docker network inspect -f \'\{\{\.IPAM.Config\}\}\'  kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.250/' | sed 's/\/.*//g' )" >> "{{ metallb_configmap_dest }}"
 
