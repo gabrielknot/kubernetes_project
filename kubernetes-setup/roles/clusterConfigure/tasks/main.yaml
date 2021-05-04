@@ -1,8 +1,10 @@
 ---
 
-- name: Setup the kind cluster
-  command: kind create cluster --config "{{ kind_config_file }}"
+- name: Delete the kind cluster
+  command: kind delete cluster 
 
+- name: Setup the kind cluster
+  command: kind create cluster 
 - name: Download "{{ pod_network_name }}" pod network
   ansible.builtin.get_url:
     url: "{{ pod_network_raw }}"
@@ -52,4 +54,5 @@
 
 - name: Setup address pool used by loadbalancers
   become: false
-  command: echo "      - $( docker network inspect -f '{{.IPAM.Config}}' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.200/' | sed 's/\/.*//g' )-$( docker network inspect -f '{{.IPAM.Config}}' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.250/' | sed 's/\/.*//g' ) >> {{ metallb_configmap_dest }}"
+  shell: echo "      - $( docker network inspect -f '{{.IPAM.Config}}' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.200/' | sed 's/\/.*//g' )-$( docker network inspect -f '{{.IPAM.Config}}' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.250/' | sed 's/\/.*//g' )" >> "{{ metallb_configmap_dest }}"
+
