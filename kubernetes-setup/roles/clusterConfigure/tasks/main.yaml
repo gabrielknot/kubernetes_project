@@ -38,6 +38,7 @@
     dest: ~/metallb-manifests.yaml
     mode: '0664'
 
+
 - name: Apply metallb mainifest
   become: false
   community.kubernetes.k8s:
@@ -52,7 +53,31 @@
       type: Ready
       status: True
 
+- name: Copy metallb configmap yaml file
+  ansible.builtin.copy:
+    src: metallb-configmap.yml
+    dest: ~/metallb-configmap.yaml
+    mode: '0664'
+
 - name: Setup address pool used by loadbalancers
   become: false
-  shell: echo "      - $( docker network inspect -f \'\{\{\.IPAM.Config\}\}\' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.200/' | sed 's/\/.*//g' )-$( docker network inspect -f \'\{\{\.IPAM.Config\}\}\'  kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.250/' | sed 's/\/.*//g' )" >> "{{ metallb_configmap_dest }}"
+  shell: echo "- $( docker network inspect -f \'\{\{\.IPAM.Config\}\}\' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.200/' | sed 's/\/.*//g' )-$( docker network inspect -f \'\{\{\.IPAM.Config\}\}\'  kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.250/' | sed 's/\/.*//g' )"
+  register: ipPool
 
+- name: Aplly ipPoolAdress in metallb configmap
+  become: false
+  community.kubernetes.k8s:
+    state: present
+    definition: 
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: metallb-system
+        name: config
+      data:
+        config: |
+          address-pools:
+          - name: default
+            protocol: layer2
+            addresses:
+              "{{ ipPool.stdout_lines}}"

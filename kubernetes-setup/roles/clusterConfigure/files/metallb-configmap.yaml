@@ -1,6 +1,6 @@
 # {{ ansible_managed }}
 ---
-apiVersion: v1
+apiVersion
 kind: ConfigMap
 metadata:
   namespace: metallb-system
