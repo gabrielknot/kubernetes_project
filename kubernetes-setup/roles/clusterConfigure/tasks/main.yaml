@@ -1,14 +1,32 @@
+---
 
 - name: Setup the kind cluster
-  become: false
-  command: kind create cluster --config "{{ kind_config }}"
+  command: kind create cluster --config "{{ kind_config_file }}"
+
+- name: Download "{{ pod_network_name }}" pod network
+  ansible.builtin.get_url:
+    url: "{{ pod_network_raw }}"
+    dest: ~/kube-flannel.yml
+    mode: '0664'
 
 - name: Install "{{ pod_network_name }}" pod network
   become: false
-  command: kubectl apply -f "{{ pod_network_raw }}"
+  community.kubernetes.k8s:
+    state: present
+    src: ~/kube-flannel.yml
+
+- name: Download metallb namespace yaml file
+  command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/master/manifests/namespace.yaml
+  ansible.builtin.get_url:
+    url: "{{ metallb_namespace_yaml_raw }}"
+    dest: ~/metallb-namespace.yaml
+    mode: '0664'
 
 - name: Create metallb namespace
-  command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/master/manifests/namespace.yaml
+  become: false
+  community.kubernetes.k8s:
+    state: present
+    src: ~/metallb-namespace.yaml
 
 - name: Create the member list secrets
   command: kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)" 
@@ -24,6 +42,7 @@
 
 - name: Apply mettallb mainifest
   command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/master/manifests/metallb.yaml
+
 - name: Wait all pods in metallb system namespace still running
   community.kubernetes.k8s_info:
     kind: Pod
@@ -31,5 +50,6 @@
     wait_condition:
       type: Ready
       status: True
+
 - name: Setup address pool used by loadbalancers
   command: echo "      - $( docker network inspect -f '{{.IPAM.Config}}' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.200/' | sed 's/\/.*//g' )-$( docker network inspect -f '{{.IPAM.Config}}' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.250/' | sed 's/\/.*//g' ) >> {{ metallb_configmap_dest }}"

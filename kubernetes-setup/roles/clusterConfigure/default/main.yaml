@@ -1,5 +1,6 @@
-kind_config: kind-ha-cluster.yaml
+kind_config_file: kind-ha-cluster.yaml
 pod_network_name: flannel
 pod_network_raw: https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-metallb_configmap_src: learning_ansible/metallb/metallb-configmap.yml
-metallb_configmap_dest: metallb/
+metallb_namespace_yaml_raw: https://raw.githubusercontent.com/metallb/metallb/master/manifests/namespace.yaml
+metallb_configmap_src: metallb-configmap.yml
+metallb_configmap_dest: metallb

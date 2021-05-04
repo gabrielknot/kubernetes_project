@@ -1,6 +1,6 @@
 ---
 - name: Node Configuration
-  hosts: master,nodes
+  hosts: localhost
   roles:
     - dockerInstall 
     - kindInstall
