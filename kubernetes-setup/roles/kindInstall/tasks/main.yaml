@@ -1,9 +1,12 @@
 - name: Download kind bin.
+  when: ansible_facts['os_family'] == "Debian"
+  become: yes
   get_url: 
     url: "{{ kind_bin_url }}"
     dest: "{{ usr_bin_kind_dir }}"
-
 - name: Give execution permissions to an existing file
+  when: ansible_facts['os_family'] == "Debian"
+  become: yes
   ansible.builtin.file:
     path: "{{ usr_bin_kind_dir }}"
     mode: '0755'

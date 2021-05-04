@@ -1,7 +1,7 @@
 ---
 
-- name: Setup the kind cluster
-  command: kind create cluster --config "{{ kind_config_file }}"
+#- name: Setup the kind cluster
+#  command: kind create cluster --config "{{ kind_config_file }}"
 
 - name: Download "{{ pod_network_name }}" pod network
   ansible.builtin.get_url:
@@ -16,7 +16,6 @@
     src: ~/kube-flannel.yml
 
 - name: Download metallb namespace yaml file
-  command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/master/manifests/namespace.yaml
   ansible.builtin.get_url:
     url: "{{ metallb_namespace_yaml_raw }}"
     dest: ~/metallb-namespace.yaml
@@ -52,4 +51,5 @@
       status: True
 
 - name: Setup address pool used by loadbalancers
+  become: false
   command: echo "      - $( docker network inspect -f '{{.IPAM.Config}}' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.200/' | sed 's/\/.*//g' )-$( docker network inspect -f '{{.IPAM.Config}}' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.250/' | sed 's/\/.*//g' ) >> {{ metallb_configmap_dest }}"

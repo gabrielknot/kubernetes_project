@@ -1,4 +1,4 @@
 - name: Install packages that allow apt to be used over HTTPS
   package:
-    name: "{{ packages_aux }}"
+    name: "{{ packages }}"
     state: present
