@@ -1,4 +1,8 @@
 - name: Install packages that allow apt to be used over HTTPS
   package:
+    name: "{{ packages_aux }}"
+    state: present
+- name: Install Docker packages that allow apt to be used over HTTPS
+  package:
     name: "{{ packages }}"
     state: present
