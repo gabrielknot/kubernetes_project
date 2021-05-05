@@ -1,0 +1,6 @@
+---
+- name: Node Configuration
+  hosts: localhost
+  roles:
+    - clusterConfigure
+

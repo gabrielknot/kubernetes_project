@@ -2,9 +2,17 @@
 
 - name: Delete the kind cluster
   command: kind delete cluster 
+  
+- name: Load kind config file
+  ansible.builtin.copy:
+    src: "{{ kind_config_file }}" 
+    dest: ~/kind-configmap.yaml
+    mode: '0664'
+
 
 - name: Setup the kind cluster
-  command: kind create cluster 
+  command: kind create cluster --config=~/"{{ kind_config_file }}" 
+
 - name: Download "{{ pod_network_name }}" pod network
   ansible.builtin.get_url:
     url: "{{ pod_network_raw }}"
