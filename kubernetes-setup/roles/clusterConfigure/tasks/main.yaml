@@ -6,12 +6,12 @@
 - name: Load kind config file
   ansible.builtin.copy:
     src: "{{ kind_config_file }}" 
-    dest: ~/kind-configmap.yaml
+    dest: "{{ kind_config_file }}" 
     mode: '0664'
 
 
 - name: Setup the kind cluster
-  command: kind create cluster --config=~/kind-configmap.yaml
+  command: kind create cluster --config="{{ kind_config_file }}" 
 
 - name: Download "{{ pod_network_name }}" pod network
   ansible.builtin.get_url:
@@ -59,13 +59,7 @@
     namespace: metallb-system
     wait_condition:
       type: Ready
-      status: True
-
-- name: Copy metallb configmap yaml file
-  ansible.builtin.copy:
-    src: metallb-configmap.yml
-    dest: ~/metallb-configmap.yaml
-    mode: '0664'
+      status: 'True'
 
 - name: Setup address pool used by loadbalancers
   become: false
