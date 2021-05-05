@@ -38,6 +38,7 @@
     src: ~/metallb-namespace.yaml
 
 - name: Create the member list secrets
+  become: false
   command: kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)" 
 
 - name: Download metallb manifests yaml file
