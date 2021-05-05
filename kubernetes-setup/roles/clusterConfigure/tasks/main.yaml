@@ -11,7 +11,7 @@
 
 
 - name: Setup the kind cluster
-  command: kind create cluster --config="{{ kind_config_file }}" 
+  command: kind create cluster --config "{{ kind_config_file }}" 
 
 - name: Download "{{ pod_network_name }}" pod network
   ansible.builtin.get_url:
