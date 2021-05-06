@@ -8,6 +8,4 @@ packages_aux:
 - software-properties-common
 
 packages:
-- docker-ce 
-- docker-ce-cli 
-- containerd.io
+- docker

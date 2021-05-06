@@ -4,6 +4,7 @@
   command: kind delete cluster 
   
 - name: Load kind config file
+  become: false
   ansible.builtin.copy:
     src: "{{ kind_config_file }}" 
     dest: "{{ kind_config_file }}" 
@@ -14,6 +15,7 @@
   command: kind create cluster --config "{{ kind_config_file }}" 
 
 - name: Download "{{ pod_network_name }}" pod network
+  become: false
   ansible.builtin.get_url:
     url: "{{ pod_network_raw }}"
     dest: ~/kube-flannel.yml
@@ -26,6 +28,7 @@
     src: ~/kube-flannel.yml
 
 - name: Download metallb namespace yaml file
+  become: false
   ansible.builtin.get_url:
     url: "{{ metallb_namespace_yaml_raw }}"
     dest: ~/metallb-namespace.yaml
@@ -42,6 +45,7 @@
   command: kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)" 
 
 - name: Download metallb manifests yaml file
+  become: false
   ansible.builtin.get_url:
     url: "{{ metallb_manifests_yaml_raw }}"
     dest: ~/metallb-manifests.yaml
@@ -55,6 +59,7 @@
     src: ~/metallb-manifests.yaml
 
 - name: Wait all pods in metallb system namespace still running
+  become: false
   community.kubernetes.k8s_info:
     kind: Pod
     namespace: metallb-system
