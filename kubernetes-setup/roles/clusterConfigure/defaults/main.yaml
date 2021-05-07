@@ -1,3 +1,4 @@
+nginx_ingress_manifests_yaml_raw:  https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
 kind_config_file: kind-sample-cluster.yaml
 pod_network_name: flannel
 pod_network_raw: https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml

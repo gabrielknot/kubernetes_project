@@ -3,9 +3,9 @@
   become: yes
   hosts: 192.168.0.15
   roles:
-    #    - dockerInstall 
-    #    - kindInstall
-    - jenkinsInstall
-      #    - kubectlInstall
-      #    - clusterConfigure
+  - dockerInstall 
+  - kindInstall
+  - jenkinsInstall
+  - kubectlInstall
+  - clusterConfigure
 

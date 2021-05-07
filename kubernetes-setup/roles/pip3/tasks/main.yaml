@@ -1,0 +1,2 @@
+- name: install openshift
+  shell: pip3 install openshift pyyaml kubernetes --user
