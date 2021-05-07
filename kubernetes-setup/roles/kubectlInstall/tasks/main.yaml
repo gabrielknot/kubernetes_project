@@ -1,0 +1,15 @@
+- name: Get k8s current version
+  shell: curl -L -s https://dl.k8s.io/release/stable.txt
+  register: k8s_latest
+- name: Add k8s bin to bin source
+  become: yes
+  get_url: 
+    url:  "https://dl.k8s.io/release/{{ k8s_latest.stdout }}/bin/linux/amd64/kubectl"
+    dest: "{{ usr_bin_k8s_dir }}"
+
+- name: Give execution permissions to an existing file
+  when: ansible_facts['os_family'] == "Debian"
+  become: yes
+  ansible.builtin.file:
+    path: "{{ usr_bin_k8s_dir }}"
+    mode: '0755'

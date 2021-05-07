@@ -1,0 +1,2 @@
+k8s_version_url: https://dl.k8s.io/release/stable.txt
+usr_bin_k8s_dir: /usr/local/bin/kubectl
