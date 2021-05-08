@@ -9,7 +9,7 @@
     name: "{{ item }}"
     state: present
   with_items:
-    openjdk-8-jdk
+    default-jdk
 
 - name: ensure the jenkins apt repository key is installed
   apt_key: 

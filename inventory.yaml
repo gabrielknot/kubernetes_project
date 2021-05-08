@@ -1,10 +1,2 @@
-all:
-  vars:
-    ansible_connection:
-      ssh
-    ansible_user:
-      server
-    ansible_ssh_pass:
-      admin
-  hosts:
-    192.168.0.15
+[server]
+my server_ip
