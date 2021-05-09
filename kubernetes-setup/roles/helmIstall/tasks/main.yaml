@@ -1,0 +1,9 @@
+- name: Install helm bin
+  unarchive:
+    src: "{{ helm_bin_url }}"
+    dest: /usr/local/bin
+    extra_opts:
+    - --strip=1
+    - --wildcards
+    - '*/helm'
+    remote_src: True
