@@ -1,6 +1,6 @@
 ---
 - name: Download helm-chart
-  ansible.builtin.get_url:
+  ansible.builtin.copy:
     url: ipNginxDocker/
     dest: ~/ipNginxDocker
     mode: '0664'
