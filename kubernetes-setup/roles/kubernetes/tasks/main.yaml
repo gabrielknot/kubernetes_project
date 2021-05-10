@@ -1,5 +1,5 @@
 ---
-- name: Download helm-chart
+- name: Copy helm-chart
   ansible.builtin.copy:
     src: ipNginxDocker/
     dest: ~/ipNginxDocker
@@ -9,6 +9,9 @@
   become: yes
   shell: "docker build -t ipnginx ~/ipNginxDocker"
 
+- name: Helm package podIpTester
+  shell: "helm package ~/ipNginxDocker/kubernetes-helm-chart/ipnginx-chart"
+
 - name: Helm install podIpTester
-  shell: "helm install podiptester ~/ipNginxDocker/kubernetes-helm-chart/ipnginx-chart"
+  shell: "helm install podiptester ~/ipNginxDocker/kubernetes-helm-chart/ipnginx-chart/ipnginx-chart-*.tgz "
 
