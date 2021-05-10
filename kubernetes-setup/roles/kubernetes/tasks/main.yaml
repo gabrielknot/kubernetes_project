@@ -1,0 +1,16 @@
+---
+- name: Download helm-chart
+  ansible.builtin.get_url:
+    url: ipNginxDocker/
+    dest: ~/ipNginxDocker
+    mode: '0664'
+
+- name: Docker build ipnginx image
+  become: yes
+  shell: "docker build -t ipnginx ~/ipNginxDocker"
+
+- name: Helm install podIpTester
+  shell: "helm install podIpTester ~/ipNginxDocker/kubernetes-helm-chart/ipnginx-chart"
+- name: Kubectl apply Metallb Manifests
+  shell: "kubectl apply -f {{ metallb_manifests_yaml_raw }}"
+

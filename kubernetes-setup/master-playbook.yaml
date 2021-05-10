@@ -9,5 +9,6 @@
   - kubectlInstall
   - clusterConfigure
   - helmInstall
-    #  - metallbSetup
+  - metallbSetup
+  - kubernetes
 
