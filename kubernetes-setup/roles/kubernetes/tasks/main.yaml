@@ -13,5 +13,4 @@
   shell: "helm package ~/ipNginxDocker/kubernetes-helm-chart/ipnginx-chart"
 
 - name: Helm install podIpTester
-  shell: "helm install podiptester ~/ipNginxDocker/kubernetes-helm-chart/ipnginx-chart/ipnginx-chart-*.tgz "
-
+  shell: "helm install --generate-name ~/ipNginxDocker/kubernetes-helm-chart/ipnginx-chart/ipnginx-chart-*.tgz "
