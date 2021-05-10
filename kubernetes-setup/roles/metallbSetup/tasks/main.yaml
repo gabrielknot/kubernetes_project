@@ -18,7 +18,7 @@
   register: metallb_sys_pods
   until:      
   - metallb_sys_pods.stdout == ""
-  retries: 6
+  retries: 22 
   delay: 2
 
 - name: Kubectl apply metallb configmap
