@@ -2,27 +2,25 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 image:
+  # Overrides the image tag whose default is the chart appVersion.
   repository: gabrielknot/ipnginx                                                                                                                       
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
   tag: ""
+  env:
+  - name: MY_POD_NAME                                                                                                                   
+    valueFrom:
+      fieldRef:                                                                                                                         
+        fieldPath: metadata.name                                                                                                        
+  - name: MY_POD_NAMESPACE                                                                                                              
+    valueFrom: 
+      fieldRef:                                                                                                                         
+        fieldPath: metadata.namespace                                                                                                   
+  - name: MY_POD_IP
+    valueFrom:
+      fieldRef:
+        fieldPath: status.podIP                                                                                                         
+          
 replicaCount: 1
-image: gabrielknot/ipnginx                                                                                                                       
-imagePullPolicy: Always
-env:
-- name: MY_POD_NAME                                                                                                                   
-  valueFrom:
-    fieldRef:                                                                                                                         
-      fieldPath: metadata.name                                                                                                        
-- name: MY_POD_NAMESPACE                                                                                                              
-  valueFrom: 
-    fieldRef:                                                                                                                         
-      fieldPath: metadata.namespace                                                                                                   
-- name: MY_POD_IP
-  valueFrom:
-    fieldRef:
-      fieldPath: status.podIP                                                                                                         
-        
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
