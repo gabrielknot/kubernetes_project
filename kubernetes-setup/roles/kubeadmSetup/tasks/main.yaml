@@ -1,0 +1,2 @@
+- name: Init the kubernetes cluster 
+  shell: kubeadm init --pod-network-cidr="{{ pod_network_cidir }}"
