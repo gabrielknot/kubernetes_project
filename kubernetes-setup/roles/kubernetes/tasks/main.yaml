@@ -1,16 +1,20 @@
 ---
-- name: Copy helm-chart
+- name: Copy ipnginx helm-chart
   ansible.builtin.copy:
     src: ipnginx-chart/
     dest: ~/ipnginx-chart
     mode: '0664'
 
-- name: Docker build ipnginx image
-  become: yes
-  shell: "docker build -t ipnginx ~/ipNginxDocker"
-
+- name: Copy stress-ng helm-chart
+  ansible.builtin.copy:
+    src: stress-ng/
+    dest: ~/stress-ng
+    mode: '0664'
   #- name: Helm package podIpTester
   #  shell: "helm package ~/ipNginxDocker/kubernetes-helm-chart/ipnginx-chart"
 
 - name: Helm install podIpTester
   shell: "helm install ipnginx ~/ipnginx-chart"
+
+- name: Helm install podIpTester
+  shell: "helm install stress-ng ~/stress-ng"
