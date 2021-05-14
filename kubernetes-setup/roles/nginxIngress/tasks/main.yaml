@@ -1,0 +1,11 @@
+# From repository
+- name: Add stable chart repo
+  community.kubernetes.helm_repository:
+    name: stable
+    repo_url: "https://kubernetes.github.io/ingress-nginx"
+ 
+- name: Deploy nginx-ingress chart 
+  community.kubernetes.helm:
+    name: test
+    chart_ref: https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.46.0/deploy/static/provider/baremetal/deploy.yaml
+    

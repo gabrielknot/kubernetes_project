@@ -1,14 +1,14 @@
 ---
 - name: Node Configuration
-  become: yes
   hosts: server
   roles:
   - dockerInstall 
-  - kindInstall
-  - jenkinsInstall
-  - kubectlInstall
-  - clusterConfigure
+  - apacheAb
+  - stressNgInstall
+  - kubernetesInstall
   - helmInstall
+  - kubeadmSetup
   - metallbSetup
-  - kubernetes
+  - nginxIngress
+  - chartsInstall
 

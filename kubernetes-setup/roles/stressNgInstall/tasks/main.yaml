@@ -1,0 +1,6 @@
+- name: Install stress-ng
+  apt:
+    name: stress-ng
+    state: present
+    update_cache: yes
+

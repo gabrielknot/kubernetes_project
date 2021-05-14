@@ -1,0 +1,13 @@
+---
+- name: Copy ipnginx helm-chart
+  ansible.builtin.copy:
+    src: ipnginx-chart/
+    dest: ~/ipnginx-chart
+    mode: '0664'
+
+- name: Deploy Ipnginx chart from local path
+  community.kubernetes.helm:
+    name: test
+    chart_ref: ~/ipnginx-chart
+    release_namespace: default
+
