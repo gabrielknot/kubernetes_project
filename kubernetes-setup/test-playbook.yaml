@@ -1,0 +1,6 @@
+---
+- name: test Playbook
+  become: yes
+  hosts: server
+  roles:
+  - stressNgTest

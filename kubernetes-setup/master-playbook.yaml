@@ -5,10 +5,10 @@
   roles:
   - dockerInstall 
   - kindInstall
-  - jenkinsInstall
+  - apacheAb
+  - stressNgInstall
   - kubectlInstall
   - clusterConfigure
   - helmInstall
   - metallbSetup
-  - kubernetes
-
+  - chartsInstall

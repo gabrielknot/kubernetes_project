@@ -1,0 +1,17 @@
+- name: Copy StressNgScript
+  ansible.builtin.copy:
+    src: stressNgTestsResult
+    dest: ~/stressNgTestsResult
+
+- name: Copy StressNgScript
+  ansible.builtin.copy:
+    src: installStressNgInsideDocker.sh 
+    dest: ~/installStressNgInsideDocker.sh 
+
+- name: exec stress ng in the server
+  shell: |
+    stress-ng --cpu 4 -l 100 --vm 1 --vm-bytes 1G --hdd 1 --fork 1000 --switch 1 --timeout 90s --metrics & \
+    docker exec kind-worker apt update && apt install stress-ng && stress-ng --cpu 4 -l 100 --vm 1 --vm-bytes 1G --hdd 1 --fork 1000 --switch 1 --timeout 90s --metrics & docker exec kind-worker2 apt update && apt install stress-ng && stress-ng --cpu 4 -l 100 --vm 1 --vm-bytes 1G --hdd 1 --fork 1000 --switch 1 --timeout 90s --metrics
+    #- name: exec stress ng in worker nodes
+    #  shell: |
+    #docker exec kind-worker apt update && apt install stress-ng && stress-ng --cpu 4 -l 100 --vm 1 --hdd 1 --fork 1000 --switch 1 --timeout 90s --metrics & docker exec kind-worker2 apt update && apt install stress-ng && stress-ng --cpu 4 -l 100 --vm 1 --hdd 1 --fork 1000 --switch 1 --timeout 90s --metrics

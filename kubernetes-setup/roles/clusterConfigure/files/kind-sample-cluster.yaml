@@ -16,4 +16,10 @@ nodes:
     hostPort: 443
     protocol: TCP
 - role: worker
+  extraMounts:
+  - hostPath: /root/stressNgTestsResult
+    containerPath: /logs
 - role: worker
+  extraMounts:
+  - hostPath: /root/stressNgTestsResult
+    containerPath: /logs
