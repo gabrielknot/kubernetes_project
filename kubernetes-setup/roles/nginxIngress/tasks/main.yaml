@@ -1,11 +1,26 @@
+- name: Apply nginx ingress manifests
+  shell: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.46.0/deploy/static/provider/baremetal/deploy.yaml
 # From repository
-- name: Add stable chart repo
-  community.kubernetes.helm_repository:
-    name: stable
-    repo_url: "https://kubernetes.github.io/ingress-nginx"
- 
-- name: Deploy nginx-ingress chart 
-  community.kubernetes.helm:
-    name: test
-    chart_ref: https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.46.0/deploy/static/provider/baremetal/deploy.yaml
-    
+
+#- name: Add nginx-ingress namespace
+#  community.kubernetes:
+#    state: present
+#    definition:
+#      apiVersion: v1
+#      kind: Namespace
+#      metadata:
+#        name: ingress-nginx
+#        labels:
+#          app.kubernetes.io/name: ingress-nginx
+#          app.kubernetes.io/instance: ingress-nginx
+#- name: Add stable chart repo
+#  community.kubernetes.helm_repository:
+#    name: stable
+#    repo_url: "https://kubernetes.github.io/ingress-nginx"
+# 
+#- name: Deploy nginx-ingress chart 
+#  community.kubernetes.helm:
+#    name: nginxIngress
+#    chart_ref: https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.46.0/deploy/static/provider/baremetal/deploy.yaml
+#    release_namespace: ingress-nginx
+#    

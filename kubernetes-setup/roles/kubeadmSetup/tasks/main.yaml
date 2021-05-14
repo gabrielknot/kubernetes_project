@@ -3,11 +3,13 @@
 - name: Init the kubernetes cluster 
   shell: "kubeadm init --pod-network-cidr {{ pod_network_cidir }}"
 - name: export KUBECONFIG
-  shell: export KUBECONFIG=/etc/kubernetes/admin.conf
-  #- name: Untaint the kubernetes cluster 
-  #  shell: kubectl taint nodes --all node-role.kubernetes.io/master-
+  shell: |
+    mkdir -p $HOME/.kube
+    sudo cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+- name: Untaint the kubernetes cluster 
+  shell: kubectl taint nodes --all node-role.kubernetes.io/master-
+
 - name: Deploy flannel pod network chart
-  community.kubernetes.helm:
-    name: test
-    chart_ref: https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-    release_namespace: default
+  shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml

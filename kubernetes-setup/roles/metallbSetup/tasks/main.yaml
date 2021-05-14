@@ -1,9 +1,146 @@
 ---
-- name: Add metallb repository
-  community.kubernetes.helm_repository:
-    name: bitnami
-    repo_url: https://charts.bitnami.com/bitnami
-- name: Deploy metallb
-  community.kubernetes.helm_repository:
-    name: metallb
-    chart_ref: bitnami/metallb
+- name: Kubectl apply Metallb Namespace
+  shell: "kubectl apply -f {{ metallb_namespace_yaml_raw }}"
+- name: Kubectl apply Metallb Manifests
+  shell: "kubectl apply -f {{ metallb_manifests_yaml_raw }}"
+
+- name: Copy file with owner and permissions
+  ansible.builtin.copy:
+    src: metallb-config-poll-addr.yaml
+    dest: ~/metallb-config-poll-addr.yaml
+    mode: '0666'
+
+    #- name: Setup address pool used by loadbalancers
+    #  shell: echo "      - $( docker network inspect -f \'\{\{\.IPAM.Config\}\}\' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.200/' | sed 's/\/.*//g' )-$( docker network inspect -f \'\{\{\.IPAM.Config\}\}\'  kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.250/' | sed 's/\/.*//g' )" >> ~/metallb-config-poll-addr.yaml
+
+- name: wait until all pods in metallb-system are Rady
+  shell: "echo $(kubectl -n metallb-system get pods | awk '{if (NR!=1) { print $3 }}' | grep -v Running)"
+  register: metallb_sys_pods
+  until:      
+  - metallb_sys_pods.stdout == ""
+  retries: 22 
+  delay: 2
+
+- name: Kubectl apply metallb configmap
+  shell: "kubectl apply -f ~/metallb-config-poll-addr.yaml"
+- name: Kubectl apply Nginx Ingress
+  shell: "kubectl apply -f {{ nginx_ingress_manifests_yaml_raw }}"
+  #
+  #- name: Aplly ipPoolAdress in metallb configmap
+  #  
+  #  community.kubernetes.k8s:
+  #    state: present
+  #    definition: 
+  #      apiVersion: v1
+  #      kind: ConfigMap
+  #      metadata:
+  #        namespace: metallb-system
+  #        name: config
+  #      data:
+  #        config: |
+  #          address-pools:
+  #          - name: default
+  #            protocol: layer2
+  #            addresses:
+  #              "{{ ipPool.stdout_lines}}"
+  #
+  #- name: Download "{{ pod_network_name }}" pod network
+  #  
+  #  ansible.builtin.get_url:
+  #    url: "{{ pod_network_raw }}"
+  #    dest: "~/kube-{{ pod_network_name }}.yml"
+  #    mode: '0664'
+  #
+  #- name: Install "{{ pod_network_name }}" pod network
+  #  
+  #  community.kubernetes.k8s:
+  #    state: present
+  #    src: "~/kube-{{ pod_network_name }}.yml"
+  #
+  #- name: Download metallb namespace yaml file
+  #  
+  #  ansible.builtin.get_url:
+  #    url: "{{ metallb_namespace_yaml_raw }}"
+  #    dest: ~/metallb-namespace.yaml
+  #    mode: '0664'
+  #
+  #- name: Create metallb namespace
+  #  
+  #  community.kubernetes.k8s:
+  #    state: present
+  #    src: ~/metallb-namespace.yaml
+  #
+  #- name: Create the member list secrets
+  #  
+  #  command: kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)" 
+  #
+  #- name: Download metallb manifests yaml file
+  #  
+  #  ansible.builtin.get_url:
+  #    url: "{{ metallb_manifests_yaml_raw }}"
+  #    dest: ~/metallb-manifests.yaml
+  #    mode: '0664'
+  #
+  #
+  #- name: Apply metallb mainifest
+  #  
+  #  community.kubernetes.k8s:
+  #    state: present
+  #    src: ~/metallb-manifests.yaml
+  #
+  #- name: Wait all pods in metallb system namespace still running
+  #  
+  #  community.kubernetes.k8s_info:
+  #    kind: Pod
+  #    namespace: metallb-system
+  #    wait: true
+  #    wait_condition:
+  #      type: Ready
+  #      status: 'True'
+  #
+  #- name: Setup address pool used by loadbalancers
+  #  
+  #  shell: echo "- $( docker network inspect -f \'\{\{\.IPAM.Config\}\}\' kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.200/' | sed 's/\/.*//g' )-$( docker network inspect -f \'\{\{\.IPAM.Config\}\}\'  kind | sed 's/[^0-9]*//'  | awk '{print $1}' | sed 's/\.0/\.255/' | sed 's/\.0/\.250/' | sed 's/\/.*//g' )"
+  #  register: ipPool
+  #
+  #- name: Aplly ipPoolAdress in metallb configmap
+  #  
+  #  community.kubernetes.k8s:
+  #    state: present
+  #    definition: 
+  #      apiVersion: v1
+  #      kind: ConfigMap
+  #      metadata:
+  #        namespace: metallb-system
+  #        name: config
+  #      data:
+  #        config: |
+  #          address-pools:
+  #          - name: default
+  #            protocol: layer2
+  #            addresses:
+  #              "{{ ipPool.stdout_lines}}"
+  #
+  #- name: Download nginx-ingress manifests yaml file
+  #  
+  #  ansible.builtin.get_url:
+  #    url: "{{ nginx_ingress_manifests_yaml_raw }}"
+  #    dest: ~/nginx_ingress_manifests.yaml
+  #    mode: '0664'
+  #
+  #
+  #- name: Apply nginx_ingress mainifest
+  #  
+  #  community.kubernetes.k8s:
+  #    state: present
+  #    src: ~/nginx_ingress_manifests.yaml
+  #
+  #- name: Wait all pods in nginx_ingress system namespace still running
+  #  
+  #  community.kubernetes.k8s_info:
+  #    kind: Pod
+  #    namespace: nginx-ingress
+  #    wait: true
+  #    wait_condition:
+  #      type: Ready
+  #      status: 'True'

@@ -1,6 +1,6 @@
 ---
 - name: Node Configuration
-  hosts: server
+  hosts: master
   roles:
   - dockerInstall 
   - apacheAb
