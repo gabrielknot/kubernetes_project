@@ -1,3 +1,0 @@
-k3s_install_by_sh: curl -sfL https://get.k3s.io | sh -s - --docker
-kind_bin_url: https://kind.sigs.k8s.io/dl/v0.10.0/kind-linux-amd64
-usr_bin_kind_dir: /usr/local/bin/kind
