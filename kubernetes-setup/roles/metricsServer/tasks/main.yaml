@@ -1,0 +1,17 @@
+---
+- name: Copy metrics-server component.yaml
+  ansible.builtin.copy:
+    src: components.yaml
+    dest: ~/metrics-server.yaml
+    mode: '0664'
+
+- name: Deploy metrics-server
+  shell: kubectl apply -f ~/metrics-server.yaml
+
+- name: Wait until metrics-server ready
+  shell: kubectl top nodes
+  register: result
+  retries: 5
+  delay: 3
+  until: result|succeeded
+  ignore_errors: yes

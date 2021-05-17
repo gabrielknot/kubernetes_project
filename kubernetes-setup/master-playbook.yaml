@@ -10,5 +10,6 @@
   - kubeadmSetup
   - metallbSetup
   - nginxIngress
+  - metricsServer
   - chartsInstall
 
