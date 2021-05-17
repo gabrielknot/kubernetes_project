@@ -1,5 +1,21 @@
+- name: Get your own ip address
+  shell: hostname -I | awk '{ print $1 }'
+  register: ipAddr
+- name: Copy nginx-inhgress deploy file with owner and permissions
+  ansible.builtin.copy:
+    src: deploy.yaml 
+    dest: ~/nginx-deploy.yaml
+    mode: '0644'
+- name: Replace EXTERNAL_IP with the server ip
+  replace:
+    path: ~/nginx-deploy.yaml
+    regexp: 'EXTERNAL_IP'
+    replace: "{{ ipAddr.stdout }}"
 - name: Apply nginx ingress manifests
-  shell: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.46.0/deploy/static/provider/baremetal/deploy.yaml
+  shell: kubectl apply -f ~/nginx-deploy.yaml
+  #  community.kubernetes.k8s:
+  #      state: present
+  #      src: ~/nginx-deploy.yaml
 # From repository
 
 #- name: Add nginx-ingress namespace
