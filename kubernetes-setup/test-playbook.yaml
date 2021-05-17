@@ -1,6 +1,6 @@
 ---
-- name: test Playbook
-  become: yes
-  hosts: server
+- name: Node Configuration
+  hosts: master
   roles:
-  - stressNgTest
+  - apacheTest 
+  - stressNgTest     
