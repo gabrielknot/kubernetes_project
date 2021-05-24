@@ -1,5 +1,8 @@
+- name: get ip addr
+  shell: hostname -I | awk '{ print $1 }' 
+  register: ipAddr
 
 - name: Test apache bench performance
-  shell: ab -n 1000000 -c 1000 http://{{ ansible_all_ipv4_addresses[2] }}/
+  shell: "ab -n 1000000 -c 1000 http://{{ ipAddr.stdout }}/"
     #  shell: |
     #docker exec kind-worker apt update && apt install stress-ng && stress-ng --cpu 4 -l 100 --vm 1 --hdd 1 --fork 1000 --switch 1 --timeout 90s --metrics & docker exec kind-worker2 apt update && apt install stress-ng && stress-ng --cpu 4 -l 100 --vm 1 --hdd 1 --fork 1000 --switch 1 --timeout 90s --metrics
