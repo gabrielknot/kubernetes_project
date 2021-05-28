@@ -13,3 +13,7 @@
   - metricsServer
   - chartsInstall
 
+- name: Kubeconfig setup
+  hosts: local
+  roles:
+  - kubeconfigSetup
