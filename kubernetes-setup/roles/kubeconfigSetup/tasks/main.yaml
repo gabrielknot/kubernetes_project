@@ -1,5 +1,5 @@
 - name: kubecofnfig getter
-    fetch:
-     src: /root/.kube/config
-     dest: ~/.kube/config
+  fetch:
+   src: /root/.kube/config
+   dest: ~/.kube/config
 
