@@ -1,0 +1,6 @@
+---
+- name: Deployment
+  hosts: local
+  connection: local
+  roles:
+  - deployment
