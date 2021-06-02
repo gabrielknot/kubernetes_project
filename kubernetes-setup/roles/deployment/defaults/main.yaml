@@ -1,3 +1,0 @@
-metallb_namespace_yaml_raw: https://raw.githubusercontent.com/metallb/metallb/master/manifests/namespace.yaml
-metallb_manifests_yaml_raw: https://raw.githubusercontent.com/metallb/metallb/master/manifests/metallb.yaml
-nginx_ingress_manifests_yaml_raw:  https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
