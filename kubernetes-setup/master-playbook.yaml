@@ -9,6 +9,6 @@
   - helmInstall
   - kubeadmSetup
   - metallbSetup
-  - nginxIngress
   - metricsServer
+  - nginxIngress
   - chartsInstall

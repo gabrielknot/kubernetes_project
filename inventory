@@ -1,4 +1,4 @@
 [local]
 127.0.0.1
 [master]
-45.79.53.185
+<<server-addr>>
