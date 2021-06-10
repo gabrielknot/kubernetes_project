@@ -1,0 +1,8 @@
+---
+- name: Node Configuration
+  hosts: master,workers
+  roles:
+    #- dockerInstall 
+    #- stressNgInstall
+    #- kubernetesInstall
+  - joinNode

@@ -1,0 +1,20 @@
+---
+- name: Create token to join cluster
+  shell: kubeadm token create --print-join-command
+  run_once: true
+  changed_when: false
+  when: inventory_hostname == groups['master'][0]
+  register: kubernetes_join_command_result
+
+- name: Debug var
+  debug:
+    msg: 'Join Command: {{ kubernetes_join_command_result.stdout }}'
+
+- name: Join workers into cluster      
+  shell: "{{ kubernetes_join_command_result.stdout }}"
+  args:
+    warn: no
+  when: inventory_hostname in groups['workers']
+  delegate_to: "{{ item }}"
+  delegate_facts: true
+  with_items: "{{ groups['workers'] }}" 

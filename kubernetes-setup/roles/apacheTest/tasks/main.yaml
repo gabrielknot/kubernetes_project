@@ -4,7 +4,7 @@
 
 
 - name: Test apache bench performance
-  shell: "time ab -n 1000000 -c 6 http://{{ ipAddr.stdout }}/"
+  shell: "time ab -n 1000000 -c 7 http://{{ ipAddr.stdout }}/"
   register: results
 
 - name: Print return information from the previous task
