@@ -2,13 +2,13 @@
 - name: Node Configuration
   hosts: master
   roles:
-    #- dockerInstall 
-    #- apacheAb
-    #- stressNgInstall
-    #- kubernetesInstall
-    #- helmInstall
-    #- kubeadmSetup
-    #- metallbSetup
-    #- metricsServer
+  - dockerInstall 
+  - apacheAb
+  - stressNgInstall
+  - kubernetesInstall
+  - helmInstall
+  - kubeadmSetup
+  - metallbSetup
+  - metricsServer
   - nginxIngress
   - chartsInstall

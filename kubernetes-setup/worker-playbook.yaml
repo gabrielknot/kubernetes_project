@@ -2,7 +2,7 @@
 - name: Node Configuration
   hosts: master,workers
   roles:
-    #- dockerInstall 
-    #- stressNgInstall
-    #- kubernetesInstall
+  - dockerInstall 
+  - stressNgInstall
+  - kubernetesInstall
   - joinNode
