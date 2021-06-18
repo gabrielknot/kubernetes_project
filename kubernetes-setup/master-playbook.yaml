@@ -11,4 +11,17 @@
   - metallbSetup
   - metricsServer
   - nginxIngress
-  - chartsInstall
+- name: Kubeconfig setup
+  hosts: master
+  roles:
+  - kubeconfigSetup
+- name: Workwr Configuration
+  hosts: workers
+  roles:
+  - dockerInstall 
+  - stressNgInstall
+  - kubernetesInstall
+- name: Node Configuration
+  hosts: master,workers
+  roles:
+  - joinNode

@@ -1,23 +1,40 @@
 - name: Get your own ip address
   shell: hostname -I | awk '{ print $1 }'
   register: ipAddr
-- name: Copy nginx-inhgress deploy file with owner and permissions
+
+- name: Copy nginx-inhgress deploy values file with owner and permissions
   ansible.builtin.copy:
     src: deploy.yaml 
     dest: ~/nginx-deploy.yaml
     mode: '0644'
+
 - name: Replace EXTERNAL_IP with the server ip
   replace:
     path: ~/nginx-deploy.yaml
     regexp: 'EXTERNAL_IP'
     replace: "{{ ipAddr.stdout }}"
-- name: Apply nginx ingress manifests
-  shell: kubectl apply -f ~/nginx-deploy.yaml
+
+- name: Add a repository
+  community.kubernetes.helm_repository:
+    name: ingress-nginx
+    repo_url: https://kubernetes.github.io/ingress-nginx
+
+- name: Deploy latest version of Prometheus chart inside monitoring namespace (and create it)
+  community.kubernetes.helm:
+    name: ingress-controler
+    chart_ref: ingress-nginx/ingress-nginx
+    release_namespace: kube-system
+    values: 
+      controller:
+        service:
+          type: NodePort
+
+    #- name: Apply nginx ingress manifests
+    #  shell: kubectl apply -f ~/nginx-deploy.yaml
   #  community.kubernetes.k8s:
   #      state: present
   #      src: ~/nginx-deploy.yaml
 # From repository
-
 #- name: Add nginx-ingress namespace
 #  community.kubernetes:
 #    state: present
