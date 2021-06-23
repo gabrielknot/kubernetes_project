@@ -1,0 +1,24 @@
+- name: Add jenkins chart repo
+  community.kubernetes.helm_repository:
+    name: jenkins
+    repo_url: "https://charts.jenkins.io "
+
+- name: Deploy latest version of Grafana chart inside monitoring namespace with values
+  community.kubernetes.helm:
+    name: jenkins
+    chart_ref: jenkins/jenkins
+    release_namespace: jenkins
+    create_namespace: true
+    values:
+      controller:
+        adminUser: "admin"
+        adminPassword: "admin"
+        serviceType: NodePort
+        nodePort: 32323
+      backup:
+        runAsUser: 0
+        fsGroup: 0
+      persistence:
+        existingClaim: jenkins-pvc
+        storageClass: "-"
+
