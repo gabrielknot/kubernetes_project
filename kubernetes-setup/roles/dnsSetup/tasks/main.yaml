@@ -15,26 +15,60 @@
     msg: "{{ result.json['result'] }}"
 - name: "Display all server ports and names from cluster1"
   set_fact:
-    zoneNameIdassociate: "'{{ item.name }}': '{{ item.id }}'"
+      zoneNameIdassociate: { name: '{{ item.name }}', id: '{{ item.id }}'}
+    #zoneNameIdassociate: "'{{ item.name }}': '{{ item.id }}'"
   with_items: "{{ result.json['result'] | json_query(server_query) }}"
   vars:
     server_query: "[].{name: name, id: id}"
 
+- debug:
+    msg: "{{ zoneNameIdassociate.id }}"
 - name: Connect to CloudFlare API using acess token
   vars:
     query:  "[? name==`fitfatfix.com`].{id}"
   uri:
-    url: "https://api.cloudflare.com/client/v4/zones/{{ item }}"
-    with_items: "{{ zoneNameIdassociate }}" 
+    url: "https://api.cloudflare.com/client/v4/zones/{{ zoneNameIdassociate.id }}/dns_records"
     method: GET
     return_content: yes
     headers:
       X-Auth-Email: "gcftutos@gmail.com" 
       X-Auth-Key: "538fca28d9038dd14b85d95c22c9f71926b2c" 
       Content-Type: "application/json"
-  register: result
-  until: result.status == 200
+  register: result_dns_records
+  until: result_dns_records.status == 200
   retries: 10
   delay: 30
 
+- debug:
+    msg: "{{ result_dns_records.json['result'] }}"
+
+- name: "Display all server ports and names from cluster1"
+  set_fact:
+      dns_records_id: '{{ item.id }}'
+    #zoneNameIdassociate: "'{{ item.name }}': '{{ item.id }}'"
+  with_items: "{{ result_dns_records.json['result'] | json_query(server_query) }}"
+  vars:
+    server_query: "[? type==`A`]"
+    #- debug:
+    #msg: "{{ dns_records_id }}"
+- name: "Display all server ports and names from cluster1"
+  set_fact:
+      zoneNameIdassociate: { name: '{{ item.name }}', id: '{{ item.id }}'}
+    #zoneNameIdassociate: "'{{ item.name }}': '{{ item.id }}'"
+  with_items: "{{ result.json['result'] | json_query(server_query) }}"
+  vars:
+    server_query: "[].{name: name, id: id}"
+- name: Connect to CloudFlare API using acess token
+  vars:
+    query:  "[? name==`fitfatfix.com`].{id}"
+    host_ip: ansible_default_ipv4.address
+  shell: 'curl -X PUT "https://api.cloudflare.com/client/v4/zones/e48037d2665c8dfe9a1415fa68cfba43/dns_records/cf3de22bacffb47bc3cf528de4fecfe9" \
+     -H "X-Auth-Email:gcftutos@gmail.com" \
+     -H "X-Auth-Key: 538fca28d9038dd14b85d95c22c9f71926b2c" \
+     -H "Content-Type: application/json" \
+     --data \'\{"type":"A","name":"{{ zoneNameIdassociate.name }}","content":"{{ host_ip }}","ttl":120,"proxied":false\}\''
+  register: result
+  retries: 10
+  delay: 30
+- debug: result.stdout
 
