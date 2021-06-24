@@ -1,47 +1,36 @@
-- name: get Cloudflare API zone_id 
-  uri:
-    url: https://www.mms.microsoft.com/Embedded/Api/ConfigDataSources/LogManagementData/Save
-    method: GET
-    body_format: json
-    status_code: [200, 202]
-    return_content: true
-    headers:
-      Content-Type: application/json
-      x-ms-client-workspace-path: /subscriptions/{{ sub_id }}/resourcegroups/{{ res_group }}/providers/microsoft.operationalinsights/workspaces/{{ w_spaces }}
-      x-ms-client-platform: ibiza
-      x-ms-client-auth-token: "{{ token_az }}"
-
 - name: Connect to CloudFlare API using acess token
   uri:
     url: https://api.cloudflare.com/client/v4/zones/
     method: GET
     return_content: yes
     headers:
-      X-Auth-Email: "XXXXXXXXXXXXXX" 
-      X-Auth-Key: "XXXXXXXXXXXXXXXXXXXXXX" 
+      X-Auth-Email: "gcftutos@gmail.com" 
+      X-Auth-Key: "538fca28d9038dd14b85d95c22c9f71926b2c" 
       Content-Type: "application/json"
   register: result
   until: result.status == 200
   retries: 10
   delay: 30
-
+- debug:
+    msg: "{{ result.json['result'] }}"
 - name: "Display all server ports and names from cluster1"
   set_fact:
-    'name_{{ item.name }}': '{{ item.port }}'
-  with_items: "{{ result['result'] | json_query(server_querry) }}"
+    zoneNameIdassociate: "'{{ item.name }}': '{{ item.id }}'"
+  with_items: "{{ result.json['result'] | json_query(server_query) }}"
   vars:
-    server_query: {{ result['result'] | json_query(query) }}
+    server_query: "[].{name: name, id: id}"
 
 - name: Connect to CloudFlare API using acess token
   vars:
-    query: {{ result['result'] | json_query(query) }}
+    query:  "[? name==`fitfatfix.com`].{id}"
   uri:
-    url: "https://api.cloudflare.com/client/v4/zones/"
+    url: "https://api.cloudflare.com/client/v4/zones/{{ item }}"
+    with_items: "{{ zoneNameIdassociate }}" 
     method: GET
     return_content: yes
     headers:
-      X-Auth-Email: "XXXXXXXXXXXXXX" 
-      X-Auth-Key: "XXXXXXXXXXXXXXXXXXXXXX" 
+      X-Auth-Email: "gcftutos@gmail.com" 
+      X-Auth-Key: "538fca28d9038dd14b85d95c22c9f71926b2c" 
       Content-Type: "application/json"
   register: result
   until: result.status == 200
