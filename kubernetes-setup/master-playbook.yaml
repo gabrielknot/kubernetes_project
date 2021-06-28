@@ -20,6 +20,8 @@
   - metricsServer
   - certManager
   - nginxIngress
+  - jenkins
+  - mysql
 - name: Kubeconfig setup
   hosts: master
   roles:

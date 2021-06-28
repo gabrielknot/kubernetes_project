@@ -57,7 +57,7 @@ roleRef:
     name: jenkins
     repo_url: "https://charts.jenkins.io "
 
-- name: Deploy latest version of Grafana chart inside monitoring namespace with values
+- name: Deploy latest version of jenkins chart inside monitoring namespace with values
   community.kubernetes.helm:
     name: jenkins
     chart_ref: jenkins/jenkins

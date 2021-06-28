@@ -1,0 +1,64 @@
+
+- name: Create a volume to storage the mysql datda
+  community.kubernetes.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: mysql-pv
+        namespace: mysql
+      spec:
+        capacity: 
+          storage: 2Gi
+        accessModes:
+          - ReadWriteOnce
+        persistentVolumeReclaimPolicy: Retain
+        hostPath:
+          path: /opt/mysql
+
+- name: Create a volume to storage the mysql datda
+  community.kubernetes.k8s:
+    state: present
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: mysql-pvc
+        namespace: mysql
+      spec:
+        storageClassName: ""
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi
+
+- name: Add mysql chart repo
+  community.kubernetes.helm_repository:
+    name: mysql
+    repo_url: "https://charts.mysql.io "
+
+- name: Deploy latest version of mysql chart inside monitoring namespace with values
+  community.kubernetes.helm:
+    name: mysql
+    chart_ref: mysql/mysql
+    release_namespace: mysql
+    create_namespace: true
+    values:
+      auth:
+        rootPassword: "rootpassword"
+        database: mydatabase
+      primary: 
+        persistence:
+          enabled: true
+          existingClaim: mysql-pvc
+          storageClass: "-"
+      secondary:
+        podSecurityContext:
+          enabled: true
+          fsGroup: 0
+        containerSecurityContext:
+          enabled: true
+          runAsUser: 0
+
