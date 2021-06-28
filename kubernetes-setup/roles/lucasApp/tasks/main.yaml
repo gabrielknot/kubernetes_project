@@ -1,0 +1,12 @@
+---
+- name: Read-write git checkout from github chart appp lucas
+  ansible.builtin.git:
+    repo: https://github.com/gabrielknot/helm_chart_example_laravel_app
+    dest: ~/helm_chart_example_laravel_app
+
+- name: Deploy Ipnginx chart from local path
+  community.kubernetes.helm:
+    name: test
+    chart_ref: ~/helm_chart_example_laravel_app/laravel_app
+    release_namespace: default
+
