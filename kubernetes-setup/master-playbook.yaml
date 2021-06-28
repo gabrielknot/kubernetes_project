@@ -1,23 +1,23 @@
 ---
-- name: Node Configuration
-  hosts: master,workers
-  roles:
-  - dockerInstall 
-  - apacheAb
-  - stressNgInstall
-  - kubernetesInstall
-  - helmInstall
+#- name: Node Configuration
+#  hosts: master,workers
+#  roles:
+#  - dockerInstall 
+#  - apacheAb
+#  - stressNgInstall
+#  - kubernetesInstall
+#  - helmInstall
 - name: Master Setup
   hosts: master
   vars:
     environment_ACME: 'dev'
-    my_cloudflare_mail: 'yourCLOUDFLAREmail@domain.com'
-    my_cloudflare_token: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-    my_domain: 'domain.com'
-    my_lets_encrypt_mail:  'yourACMEmail@domain.com'
+    my_cloudflare_mail: 'gcftutos@gmail.com'
+    my_cloudflare_token: '0sOOi1kf-ONP7Erl0HIDGP8ZCbHLDezclYeJiYkD'
+    my_domain: 'fitfatfix.com'
+    my_lets_encrypt_mail: 'gcftutos@gmail.com'
   roles:
-  - kubeadmSetup
-  - metricsServer
+    #- kubeadmSetup
+    #- metricsServer
   - certManager
   - nginxIngress
 - name: Kubeconfig setup
