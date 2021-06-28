@@ -1,0 +1,24 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-stg
+spec:
+  acme:
+    email: LETS_ENCRYPT_MAIL
+    preferredChain: ""
+    privateKeySecretRef:
+      name: le-issuer-acct-key
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    #server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+    - dns01:
+        cloudflare:
+          apiTokenSecretRef:
+            key: api-token
+            name: cloudflare-api-token-secret
+          email: CLOUDFLARE_MAIL
+      selector:
+        dnsZones:
+        - 'DOMAIN'
+        - '*.DOMAIN'
+

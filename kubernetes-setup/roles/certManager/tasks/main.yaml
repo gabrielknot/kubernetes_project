@@ -1,7 +1,8 @@
-- name: Add cert-manager repository
-  kubernetes.core.helm_repository:
-    name: jetstack
-    repo_url: https://charts.jetstack.io
+
+- name: add cert manager jetsstack repo
+  shell: "helm repo add jetstack https://charts.jetstack.io"
+- name: add cert manager jetsstack repo
+  shell: "helm repo update"
 - name: Deploy latest version of cert-manager chart inside cert-manager namespace (and create it)
   community.kubernetes.helm:
     name: test
@@ -10,3 +11,157 @@
     create_namespace: true
     values:
       installCRDs=true
+- name: deploy cloudflare secret
+  community.kubernetes.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: cloudflare-api-key-secret
+        namespace: cert-manager
+      type: Opaque
+      stringData:
+        api-token: "{{ my_cloudflare_token }}"
+
+- name: deploy clusterissue
+  community.kubernetes.k8s:
+    state: present
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: ClusterIssuer
+      metadata:
+        name: letsencrypt-stg
+      spec:
+        acme:
+          email: "{{ my_lets_encrypt_mail }}" 
+          preferredChain: ""
+          privateKeySecretRef:
+            name: le-issuer-acct-key
+          server: https://acme-staging-v02.api.letsencrypt.org/directory
+          solvers:
+          - dns01:
+              cloudflare:
+                apiTokenSecretRef:
+                  key: api-token
+                  name: cloudflare-api-token-secret
+                email: "{{ my_cloudflare_mail }}"
+            selector:
+              dnsZones:
+              - "{{ my_domain }}"
+              - "*.{{ my_domain }}"
+  when:  ansible_facts['environment_ACME'] == "dev"
+  
+
+- name: deploy clusterissue
+  community.kubernetes.k8s:
+    state: present
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: ClusterIssuer
+      metadata:
+        name: letsencrypt-stg
+      spec:
+        acme:
+          email: "{{ my_lets_encrypt_mail }}" 
+          preferredChain: ""
+          privateKeySecretRef:
+            name: le-issuer-acct-key
+          server: https://acme-v02.api.letsencrypt.org/directory
+          solvers:
+          - dns01:
+              cloudflare:
+                apiTokenSecretRef:
+                  key: api-token
+                  name: cloudflare-api-token-secret
+                email: "{{ my_cloudflare_mail }}"
+            selector:
+              dnsZones:
+              - "{{ my_domain }}"
+              - "*.{{ my_domain }}"
+  when:  ansible_facts['environment_ACME'] == "prod"
+
+- name: deploy clusterissue
+  community.kubernetes.k8s:
+    state: present
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: Certificate
+      metadata:
+        name: le-test-mydomdom-org
+        namespace: default
+      spec:
+        commonName: "*.{{ my_domain }}"
+        dnsNames:
+        - "{{ my_domain }}"
+        - "*.{{ my_domain }}"
+        issuerRef:
+          kind: ClusterIssuer
+          name: letsencrypt-stg
+        secretName: le-test-mydomdom-org
+
+
+      #- name: Copy cerificates deployment to de master 
+      #  ansible.builtin.copy:
+      #    src: certificates/
+      #    dest: ~/certificates
+      #    mode: '0664'
+      #
+      #- name: Replace CLOUDFLARE_MAIL with my_cloudflare_mail variable
+      #  replace:
+      #    path: ~/certificates/clusterIssue/cert-issuer-nginx-ingress*.yaml
+      #    regexp: 'CLOUDFLARE_MAIL'
+      #    replace: "{{ my_cloudflare_mail }}"
+      #
+      #- name: Replace LETS_ENCRYPT_MAIL with my_lets_encrypt_mail variable
+      #  replace:
+      #    path: ~/certificates/clusterIssue/cert-issuer-nginx-ingress*.yaml
+      #    regexp: 'LETS_ENCRYPT_MAIL'
+      #    replace: "{{ my_lets_encrypt_mail }}"
+      #
+      #- name: Replace DOMAIN with my_domain variable
+      #  replace:
+      #    path: ~/certificates/clusterIssue/cert-issuer-nginx-ingress*.yaml
+      #    regexp: 'DOMAIN'
+      #    replace: "{{ my_domain }}"
+      #
+      #- name: Replace DOMAIN with my_domain variable
+      #  replace:
+      #    path: ~/certificates/certificate.yaml
+      #    regexp: 'DOMAIN'
+      #    replace: "{{ my_domain }}"
+      #
+      #- name: Replace API_TOKEN with my_cloudflare_token variable
+      #  replace:
+      #    path: ~/certificates/cloudflareApiSecret.yaml'
+      #    regexp: 'API_TOKEN'
+      #    replace: "{{ my_cloudflare_token }}"
+      #
+      #
+      #- name: Apllying cloudflare secret
+      #  shell: 'kubectl apply -f ~/certificates/cloudflareApiSecret.yaml'
+      #
+      #  #- name: Checking if environment_ACME is 'dev' or 'prod'
+      #  #  ansible.builtin.fail: msg=Bailing out. This play requires 'environment_ACME' == 'dev' or 'prod'
+      #  #  when: ("{{ environment_ACME }}" != 'dev' or "{{ environment_ACME }}" != 'prod')
+      #
+      #- name: Apllying certificate DNS based on in the cluster
+      #  shell: 'kubectl apply -f ~/certificates/clusterIssue/cert-issuer-nginx-ingress.yaml'
+      #  when: ("{{ environment_ACME }}" == 'prod')
+      #
+      #- name: Apllying certificate DNS based on in the cluster
+      #  shell: 'kubectl apply -f ~/certificates/clusterIssue/cert-issuer-nginx-ingress-staging.yaml'
+      #  when: ("{{ environment_ACME }}" == 'dev')
+      #
+      #- name: Apllying certificate DNS based on in the cluster
+      #  shell: 'kubectl apply -f ~/certificates/'
+      #
+      #- name: Wait unitl all the certificates are issued
+      #  shell: "/usr/bin/kubectl get certificates"
+      #  register: certificates
+      #  until:      
+      #    - '" True "  in certificates.stdout'      
+      #  retries: 16
+      #  delay: 3
+      #
+      #

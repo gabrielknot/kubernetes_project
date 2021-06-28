@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: le-test-mydomdom-org
+  namespace: default
+spec:
+  commonName: '*.DOMAIN'
+  dnsNames:
+  - 'DOMAIN'
+  - '*.DOMAIN'
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-stg
+  secretName: le-test-mydomdom-org
+
