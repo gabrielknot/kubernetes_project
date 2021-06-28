@@ -1,0 +1,12 @@
+- name: Add cert-manager repository
+  kubernetes.core.helm_repository:
+    name: jetstack
+    repo_url: https://charts.jetstack.io
+- name: Deploy latest version of cert-manager chart inside cert-manager namespace (and create it)
+  community.kubernetes.helm:
+    name: test
+    chart_ref: jetstack/cert-manager
+    release_namespace: cert-manager
+    create_namespace: true
+    values:
+      installCRDs=true

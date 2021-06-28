@@ -12,6 +12,7 @@
   roles:
   - kubeadmSetup
   - metricsServer
+  - certManager
   - nginxIngress
 - name: Kubeconfig setup
   hosts: master
