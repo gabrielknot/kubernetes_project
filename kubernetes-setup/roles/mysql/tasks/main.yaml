@@ -43,8 +43,7 @@
   community.kubernetes.helm:
     name: mysql
     chart_ref: mysql/mysql
-    release_namespace: mysql
-    create_namespace: true
+    release_namespace: default
     values:
       auth:
         rootPassword: "rootpassword"
